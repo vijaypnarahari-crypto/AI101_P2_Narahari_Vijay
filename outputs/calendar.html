@@ -1,0 +1,69 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>AI101 + ANIM223 Calendar</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Roboto,"Google Sans",Arial,sans-serif;color:#3c4043;background:#fff;display:flex;flex-direction:column;height:100vh}
+header{display:flex;align-items:center;gap:12px;padding:8px 16px;border-bottom:1px solid #dadce0}
+header h1{font-size:22px;font-weight:400;margin:0 16px 0 4px;color:#5f6368}
+button{font:inherit;border:1px solid #dadce0;background:#fff;border-radius:4px;padding:7px 14px;cursor:pointer;color:#3c4043}button:hover{background:#f1f3f4}
+.nav{border:0;border-radius:50%;width:36px;height:36px;padding:0;font-size:18px}
+#title{font-size:22px;color:#3c4043;min-width:190px}
+.main{display:flex;flex:1;min-height:0}
+aside{width:240px;padding:16px;border-right:1px solid #dadce0;overflow:auto;font-size:13px}
+aside h3{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:#70757a;margin:18px 0 8px}
+.leg{display:flex;align-items:center;gap:8px;margin:6px 0}.sw{width:14px;height:14px;border-radius:3px}
+.nd{margin:0 0 10px;line-height:1.35}.nd b{display:block}
+.cal{flex:1;display:flex;flex-direction:column;min-width:0}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid #dadce0}
+.dow div{text-align:center;font-size:11px;font-weight:500;color:#70757a;padding:8px 0;letter-spacing:.8px}
+#grid{flex:1;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(0,1fr);overflow:auto}
+.day{border-right:1px solid #dadce0;border-bottom:1px solid #dadce0;padding:2px 4px;min-height:100px;overflow:hidden}
+.day:nth-child(7n){border-right:0}.day.other{background:#fafafa}.day.other .num{color:#9aa0a6}
+.num{display:flex;justify-content:center;margin:2px 0 3px}.num span{font-size:12px;width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%}
+.today .num span{background:#1a73e8;color:#fff}
+.ev{font-size:12px;line-height:18px;border-radius:4px;padding:0 6px;margin:1px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.AI101.cls{background:#d2e3fc;color:#174ea6}.ANIM223.cls{background:#ceead6;color:#0d652d}
+.AI101.due{background:#1a73e8;color:#fff;font-weight:500}.ANIM223.due{background:#188038;color:#fff;font-weight:500}
+.rd{font-style:italic;opacity:.85}
+.show{outline:2px solid #3c4043}
+#pop{position:fixed;display:none;background:#fff;border-radius:8px;box-shadow:0 4px 18px rgba(0,0,0,.3);padding:16px;width:320px;z-index:9;font-size:14px}
+#pop .t{font-size:16px;margin-bottom:6px;color:#202124}#pop .m{color:#5f6368;font-size:13px}
+</style></head><body>
+<header><button id="today">Today</button><button class="nav" id="prev">&#8249;</button><button class="nav" id="next">&#8250;</button><div id="title"></div><h1 style="margin-left:auto">AI101 + ANIM223 Fall 2026</h1></header>
+<div class="main"><aside><h3>Calendars</h3>
+<div class="leg"><span class="sw" style="background:#1a73e8"></span>AI101 due</div><div class="leg"><span class="sw" style="background:#d2e3fc"></span>AI101 class / other</div>
+<div class="leg"><span class="sw" style="background:#188038"></span>ANIM223 due</div><div class="leg"><span class="sw" style="background:#ceead6"></span>ANIM223 class / other</div>
+<div class="leg"><i>Italic</i>&nbsp;= reading</div>
+<h3>Not yet scheduled</h3><div id="nd"></div></aside>
+<div class="cal"><div class="dow"><div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div></div><div id="grid"></div></div></div>
+<div id="pop"></div>
+<script>
+const EV=[{"d": "2026-09-15", "c": "AI101", "t": "Class", "n": "Class 1: Set Up Your Practice"}, {"d": "2026-09-15", "c": "AI101", "t": "Assignment", "n": "Your Agent Brief"}, {"d": "2026-09-15", "c": "ANIM223", "t": "Class", "n": "Lecture: The Beginning"}, {"d": "2026-09-15", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation - Chapters 1 &2"}, {"d": "2026-09-15", "c": "ANIM223", "t": "Assignment", "n": "Launch Assignment 1: Unit 1 Paper"}, {"d": "2026-09-17", "c": "AI101", "t": "Class", "n": "Class 2: Make Something"}, {"d": "2026-09-17", "c": "ANIM223", "t": "Class", "n": "Lecture: Innovation & Experimentation in the early Silent Era"}, {"d": "2026-09-22", "c": "AI101", "t": "Class", "n": "Class 3: See the Whole Room"}, {"d": "2026-09-22", "c": "ANIM223", "t": "Class", "n": "Lecture: Growth of the Animation Industry in the 1920's"}, {"d": "2026-09-22", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation - Chapters 3 & 4"}, {"d": "2026-09-24", "c": "AI101", "t": "Project", "n": "Project 1: Make, Then Compare"}, {"d": "2026-09-24", "c": "AI101", "t": "Class", "n": "Class 4: Name the Trade"}, {"d": "2026-09-24", "c": "ANIM223", "t": "Class", "n": "Lecture: Animation Matures as an Art Form"}, {"d": "2026-09-24", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation - Chapter 5 & 6"}, {"d": "2026-09-29", "c": "AI101", "t": "Class", "n": "Class 5: Name the Process"}, {"d": "2026-09-29", "c": "ANIM223", "t": "Class", "n": "Lecture: First Features and Better Storytelling with Improved Believability"}, {"d": "2026-10-01", "c": "AI101", "t": "Class", "n": "Class 6: Verify Your Sources"}, {"d": "2026-10-01", "c": "ANIM223", "t": "Class", "n": "Lecture: Warner Bros."}, {"d": "2026-10-01", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation, Chapters 7 & 8"}, {"d": "2026-10-06", "c": "AI101", "t": "Class", "n": "Class 7: Build a Pipeline"}, {"d": "2026-10-06", "c": "ANIM223", "t": "Class", "n": "Lecture: MGM and other Hollywood studios"}, {"d": "2026-10-08", "c": "AI101", "t": "Project", "n": "Project 2: Small Orchestration"}, {"d": "2026-10-08", "c": "AI101", "t": "Class", "n": "Class 8: Take Feedback, Iterate"}, {"d": "2026-10-08", "c": "ANIM223", "t": "Class", "n": "Lecture: Wartime Animation"}, {"d": "2026-10-08", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation, Chapter 9"}, {"d": "2026-10-13", "c": "AI101", "t": "Class", "n": "Class 9: Disclosure and Position"}, {"d": "2026-10-13", "c": "ANIM223", "t": "Class", "n": "Lecture: Post-War and Midcentury Developments"}, {"d": "2026-10-13", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation, Chapters 10 & 11"}, {"d": "2026-10-15", "c": "AI101", "t": "Class", "n": "Class 10: Study Your Field"}, {"d": "2026-10-15", "c": "ANIM223", "t": "Class", "n": "Lecture: Rise of Stop Motion"}, {"d": "2026-10-15", "c": "ANIM223", "t": "Assignment", "n": "DUE: Assignment 1 - Submit remaining textbook summaries of chapters 1 thru 11."}, {"d": "2026-10-15", "c": "ANIM223", "t": "Test", "n": "DUE: Assignment 2 - Midterm Test - Multiple choice and short answer - In Class Only"}, {"d": "2026-10-15", "c": "ANIM223", "t": "Assignment", "n": "Launch Assignment 3: Unit 3 Paper"}, {"d": "2026-10-15", "c": "ANIM223", "t": "Class", "n": "Extra Help Session 1"}, {"d": "2026-10-20", "c": "AI101", "t": "Class", "n": "Class 11: Build for Your Field"}, {"d": "2026-10-20", "c": "ANIM223", "t": "Class", "n": "Lecture: Animation Moves to the Small Screen as Live Action Did"}, {"d": "2026-10-20", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation, Chapters 12 & 13"}, {"d": "2026-10-22", "c": "AI101", "t": "Project", "n": "Project 3: Your Field, With AI"}, {"d": "2026-10-22", "c": "AI101", "t": "Class", "n": "Class 12: Crit and Revise"}, {"d": "2026-10-22", "c": "ANIM223", "t": "Class", "n": "Lecture: Experimentation and Computers"}, {"d": "2026-10-27", "c": "AI101", "t": "Class", "n": "Class 13: Define Your Agent"}, {"d": "2026-10-27", "c": "ANIM223", "t": "Class", "n": "Lecture: The Beginning of a Decline in Animated Theatrical Features"}, {"d": "2026-10-27", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation, Chapters 14 & 15"}, {"d": "2026-10-29", "c": "AI101", "t": "Class", "n": "Class 14: Assemble the Sources"}, {"d": "2026-10-29", "c": "ANIM223", "t": "Class", "n": "Lecture: Bluth, Bakshi, & Williams"}, {"d": "2026-10-29", "c": "ANIM223", "t": "Project", "n": "Launch Assignment 4 Team Presentation Project - All are Due by start of Class 19"}, {"d": "2026-11-03", "c": "AI101", "t": "Class", "n": "Class 15: Build and Test"}, {"d": "2026-11-03", "c": "ANIM223", "t": "Class", "n": "Lecture: Animation Festivals & Short Films"}, {"d": "2026-11-03", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation, Chapters 16, 17, & 18"}, {"d": "2026-11-05", "c": "AI101", "t": "Class", "n": "Class 16: Find the Failures"}, {"d": "2026-11-05", "c": "ANIM223", "t": "Class", "n": "Lecture: Animation in Canada"}, {"d": "2026-11-07", "c": "ANIM223", "t": "Class", "n": "Study Trip 1: Jen Library"}, {"d": "2026-11-10", "c": "AI101", "t": "Class", "n": "Class 17: Revise"}, {"d": "2026-11-10", "c": "ANIM223", "t": "Class", "n": "Lecture: The Disney Renaissance"}, {"d": "2026-11-10", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation, Chapters 19 & 20"}, {"d": "2026-11-10", "c": "ANIM223", "t": "Project", "n": "Presentation Team Discussions - Assignment 4:"}, {"d": "2026-11-12", "c": "AI101", "t": "Class", "n": "Class 18: Confirm the Difference"}, {"d": "2026-11-12", "c": "ANIM223", "t": "Class", "n": "Lecture: Emergence of Electronic Games & 3D Experimentation"}, {"d": "2026-11-12", "c": "ANIM223", "t": "Reading", "n": "Reading: A New History of Animation, Chapters 21 & 22"}, {"d": "2026-11-17", "c": "AI101", "t": "Class", "n": "Class 19: Demo and Defend"}, {"d": "2026-11-17", "c": "ANIM223", "t": "Class", "n": "Lecture: Japanese Animation"}, {"d": "2026-11-17", "c": "ANIM223", "t": "Assignment", "n": "DUE: Assignment 3 - Submit remaining textbook summaries of chapters 12 thru 24."}, {"d": "2026-11-17", "c": "ANIM223", "t": "Project", "n": "DUE: Assignment 4 - Team Presentation Project"}, {"d": "2026-11-19", "c": "AI101", "t": "Project", "n": "Capstone: Your Own Agent"}, {"d": "2026-11-19", "c": "AI101", "t": "Assignment", "n": "Professional Practice"}, {"d": "2026-11-19", "c": "AI101", "t": "Class", "n": "Class 20: Reflect and Carry Forward"}, {"d": "2026-11-19", "c": "ANIM223", "t": "Class", "n": "Lecture: Technology and Entertainment"}, {"d": "2026-11-19", "c": "ANIM223", "t": "Test", "n": "DUE: Assignment 5 - Final Test - Multiple choice and short answer - In Class Only"}],ND=[{"c": "AI101", "t": "Class", "n": "Study Trip 1", "w": "1 TBD and will announce on BB"}, {"c": "AI101", "t": "Class", "n": "Extra Help Session 1", "w": "1: Extra Help Session are on Fridays, Date and Time will be announced on BB"}, {"c": "AI101", "t": "Class", "n": "Extra Help Session 2", "w": "2: Extra Help Session are on Fridays, Date and Time will be announced on BB"}, {"c": "AI101", "t": "Class", "n": "Extra Help Session 4", "w": "4: Extra Help Session are on Fridays, Date and Time will be announced on BB"}, {"c": "AI101", "t": "Class", "n": "Extra Help Session 3", "w": "3: Extra Help Session are on Fridays, Date and Time will be announced on BB"}, {"c": "AI101", "t": "Class", "n": "Midterm Conference(s)", "w": "scheduled outside of class time with the professor"}, {"c": "ANIM223", "t": "Assignment", "n": "Acquire the textbook & prepare for Class One", "w": "by the beginning of the quarter; \"prepare for Class One\""}, {"c": "ANIM223", "t": "Assignment", "n": "Over the weekend teams will establish a team discord, discuss and determine their 1st and 2nd choice of topic.", "w": "Over the weekend (listed under Class 14)"}, {"c": "ANIM223", "t": "Class", "n": "Midterm Conference(s)", "w": "scheduled outside of class time with the professor"}];
+const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const todayS=new Date().toISOString().slice(0,10);
+let cur=new Date(2026,9,1);
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pop=document.getElementById("pop");
+function render(){
+ document.getElementById("title").textContent=MN[cur.getMonth()]+" "+cur.getFullYear();
+ const first=new Date(cur.getFullYear(),cur.getMonth(),1),start=new Date(first);start.setDate(1-first.getDay());
+ const last=new Date(cur.getFullYear(),cur.getMonth()+1,0),weeks=Math.ceil((first.getDay()+last.getDate())/7);
+ const g=document.getElementById("grid");g.innerHTML="";
+ for(let i=0;i<weeks*7;i++){
+  const d=new Date(start);d.setDate(start.getDate()+i);const s=iso(d);
+  const cell=document.createElement("div");cell.className="day"+(d.getMonth()!=cur.getMonth()?" other":"")+(s==todayS?" today":"");
+  cell.innerHTML='<div class="num"><span>'+(d.getDate()==1?MN[d.getMonth()].slice(0,3)+" 1":d.getDate())+'</span></div>';
+  EV.filter(e=>e.d==s).forEach(e=>{
+   const due=["Assignment","Project","Test"].includes(e.t);
+   const b=document.createElement("div");b.className="ev "+e.c+" "+(due?"due":"cls")+(e.t=="Reading"?" rd":"");
+   b.textContent=e.c+" \u00b7 "+e.t+": "+e.n;b.title=e.c+" "+e.t+": "+e.n;
+   b.onclick=ev=>{ev.stopPropagation();pop.innerHTML='<div class="t">'+esc(e.n)+'</div><div class="m">'+e.c+" \u00b7 "+e.t+'<br>'+d.toDateString()+'</div>';
+    pop.style.display="block";pop.style.left=Math.min(ev.clientX,innerWidth-340)+"px";pop.style.top=Math.min(ev.clientY,innerHeight-160)+"px"};
+   cell.appendChild(b)});
+  g.appendChild(cell)}
+}
+document.addEventListener("click",()=>pop.style.display="none");
+prev.onclick=()=>{cur.setMonth(cur.getMonth()-1);render()};next.onclick=()=>{cur.setMonth(cur.getMonth()+1);render()};
+today.onclick=()=>{const n=new Date();cur=new Date(n.getFullYear(),n.getMonth(),1);render()};
+document.getElementById("nd").innerHTML=ND.map(x=>'<p class="nd"><b>'+x.c+" \u00b7 "+esc(x.n)+'</b>'+esc(x.w)+'</p>').join("");
+render();
+</script></body></html>

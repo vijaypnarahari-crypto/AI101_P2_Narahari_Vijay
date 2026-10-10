@@ -1,0 +1,18 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# Syllabus → Calendar workflow\n**Input:** syllabi for AI101 and ANIM223  \n**Output:** a calendar with every class date, assignment, project, and test, checked weekly\n\n📄 [[00-start-here]]","x":0,"y":-320,"width":1900,"height":180},
+		{"id":"legend","type":"text","text":"### Legend\n⬜ **YOU**: gather the input\n🟦 **MODEL**: the model does this step\n🟧 **HUMAN CHECK**: I verify and fix","x":0,"y":380,"width":420,"height":180},
+		{"id":"step1","type":"text","text":"## 1. Collect syllabi\n**Who:** ⬜ YOU\n\n- Get the current AI101 and ANIM223 syllabi\n- Save them in input/syllabi/ (each lists its class meeting dates)\n\n**Hand-off:** both syllabi\n\n📄 [[01-collect-syllabi]]","x":0,"y":-100,"width":340,"height":420},
+		{"id":"step2","type":"text","text":"## 2. Extract every dated item\n**Who:** 🟦 MODEL\n\n- Pull every class meeting, reading, assignment, project, and test from both syllabi\n- **2a.** Convert relative dates (\"Class 1\", \"Week 1\") into real calendar dates using the class meeting dates in each syllabus\n\n**Hand-off:** one dated list per course\n\n📄 [[02-extract-dated-items]]","x":390,"y":-100,"width":340,"height":420,"color":"5"},
+		{"id":"step3","type":"text","text":"## 3. Add events\n**Who:** 🟦 MODEL\n\n- **3a.** Add fixed events (class meetings and no-class days from the syllabi)\n- **3b.** Add due dates for assignments, projects, and tests\n\n**Hand-off:** a populated calendar\n\n📄 [[03-add-events]]","x":780,"y":-100,"width":340,"height":420,"color":"5"},
+		{"id":"step4","type":"text","text":"## 4. Check for overlaps\n**Who:** 🟦 MODEL\n\n- Compare AI101 and ANIM223 due dates\n- Flag any day or week where deadlines pile up\n\n**Hand-off:** calendar + list of flagged overlaps\n\n📄 [[04-check-overlaps]]","x":1170,"y":-100,"width":340,"height":420,"color":"5"},
+		{"id":"step5","type":"text","text":"## 5. Review & update weekly\n**Who:** 🟧 HUMAN CHECK\n\n- Every week, compare the calendar to the syllabi and any instructor announcements\n- Fix wrong dates, add changes, plan around flagged overlaps\n\n**Output:** an up-to-date calendar I trust\n\n📄 [[05-review-weekly]]","x":1560,"y":-100,"width":340,"height":420,"color":"2"}
+	],
+	"edges":[
+		{"id":"e1-2","fromNode":"step1","fromSide":"right","toNode":"step2","toSide":"left","toEnd":"arrow"},
+		{"id":"e2-3","fromNode":"step2","fromSide":"right","toNode":"step3","toSide":"left","toEnd":"arrow"},
+		{"id":"e3-4","fromNode":"step3","fromSide":"right","toNode":"step4","toSide":"left","toEnd":"arrow"},
+		{"id":"e4-5","fromNode":"step4","fromSide":"right","toNode":"step5","toSide":"left","toEnd":"arrow"},
+		{"id":"e5-3","fromNode":"step5","fromSide":"bottom","toNode":"step3","toSide":"bottom","toEnd":"arrow","label":"weekly: send corrections back"}
+	]
+}
